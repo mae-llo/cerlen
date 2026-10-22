@@ -1,0 +1,22 @@
+# Copy to /etc/systemd/system/cerlen.service, then:
+#   sudo systemctl daemon-reload && sudo systemctl enable --now cerlen
+# Change User and the two paths to match your server.
+[Unit]
+Description=Cerlen book club bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=cerlen
+WorkingDirectory=/opt/cerlen
+ExecStart=/opt/cerlen/.venv/bin/python -m cerlen
+Restart=on-failure
+RestartSec=10
+# Keeps the database and voice.json outside the code folder.
+Environment=DATA_DIR=/var/lib/cerlen
+StateDirectory=cerlen
+NoNewPrivileges=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

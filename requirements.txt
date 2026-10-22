@@ -1,0 +1,6 @@
+discord.py>=2.4,<3
+aiosqlite>=0.20,<1
+aiohttp>=3.9,<4
+python-dotenv>=1.0,<2
+# Windows has no system time zone database, so zoneinfo needs this package.
+tzdata>=2024.1

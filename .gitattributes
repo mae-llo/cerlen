@@ -1,0 +1,4 @@
+# Keep LF line endings on every OS so scripts and the service file still run
+# when the project moves from Windows to Linux.
+* text=auto eol=lf
+*.bat text eol=crlf

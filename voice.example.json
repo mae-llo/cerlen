@@ -1,0 +1,7 @@
+{
+  "welcome": "Welcome to the archives, {user}. Type /help if you need anything.",
+  "help_opening": "These are the commands available.",
+  "not_admin": "That is for the admins.",
+  "book_not_found": "I could not find that book in my records.",
+  "error": "Something went wrong. Please try again in a moment."
+}
