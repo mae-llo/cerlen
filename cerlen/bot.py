@@ -10,7 +10,7 @@ from discord import app_commands
 from discord.ext import commands
 
 import cerlen.voice_config  # noqa: F401  (adds extra default lines)
-from cerlen import repo
+from cerlen import repo_reads
 from cerlen.books.service import BookService
 from cerlen.checks import NotAdmin
 from cerlen.db import Database
@@ -21,9 +21,19 @@ log = logging.getLogger(__name__)
 
 EXTENSIONS = (
     "cerlen.cogs.book",
+    "cerlen.cogs.club",
+    "cerlen.cogs.queue",
+    "cerlen.cogs.progress",
+    "cerlen.cogs.review",
+    "cerlen.cogs.stats",
     "cerlen.cogs.profile",
+    "cerlen.cogs.tbr",
+    "cerlen.cogs.reading",
+    "cerlen.cogs.log",
     "cerlen.cogs.config",
+    "cerlen.cogs.data",
     "cerlen.cogs.help",
+    "cerlen.cogs.reminders",
 )
 
 
@@ -48,9 +58,9 @@ class CerlenBot(commands.Bot):
         self.http_session = aiohttp.ClientSession(headers={"User-Agent": f"CerlenBookClubBot/0.1{contact}"})
         self.books = BookService(self.http_session, self.db)
 
-        from cerlen.views import BookButton
+        from cerlen.views import dynamic_items
 
-        self.add_dynamic_items(BookButton)
+        self.add_dynamic_items(*dynamic_items())
 
         for extension in EXTENSIONS:
             await self.load_extension(extension)
@@ -71,21 +81,18 @@ class CerlenBot(commands.Bot):
         if self.get_guild(self.settings.guild_id) is None:
             log.warning("Cerlen is not in the server with GUILD_ID %s. Check the ID and the invite.", self.settings.guild_id)
 
-    async def on_member_join(self, member: discord.Member) -> None:
-        if member.guild.id != self.settings.guild_id or member.bot:
+    async def on_app_command_completion(self, interaction: discord.Interaction, command) -> None:
+        """Cerlen's welcome, shown once, the first time someone uses the bot."""
+        if interaction.user.bot or not await repo_reads.mark_seen(self.db, interaction.user.id):
             return
-        settings = await repo.get_settings(self.db, member.guild.id)
-        channel_id = settings["announcement_channel_id"]
-        channel = member.guild.get_channel(channel_id) if channel_id else None
-        if isinstance(channel, discord.TextChannel):
-            try:
-                await channel.send(self.voice.say("welcome", user=member.mention))
-            except discord.HTTPException:
-                log.warning("Could not post the welcome line in %s", channel)
+        try:
+            await interaction.followup.send(self.voice.say("welcome", user=interaction.user.mention))
+        except discord.HTTPException:
+            log.warning("Could not send the welcome line.")
 
     async def on_tree_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError) -> None:
         if isinstance(error, NotAdmin) or isinstance(error, app_commands.CheckFailure):
-            text = self.voice.say("not_admin")
+            text = self.voice.say("not_admin", user=interaction.user.mention)
         else:
             log.exception("Command failed", exc_info=error)
             text = self.voice.say("error")

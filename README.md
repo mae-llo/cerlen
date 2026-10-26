@@ -2,7 +2,9 @@
 
 A Discord book club bot for one server. Python 3.11+ and discord.py.
 
-This is an early build. Working now: `/book`, `/profile`, `/config` (personal details, favorites and admin settings) and `/help`. Club reads, reviews, deadlines and stats come in later steps.
+Commands: `/book`, `/club`, `/queue`, `/progress`, `/review`, `/stats`, `/profile`, `/tbr`, `/reading`, `/log`, `/config`, `/data` and `/help`. Type `/help` in Discord for the full list.
+
+Reminders go out at the time set with `/config reminder-time` (default 9:00 AM America/New_York), and polls close by themselves.
 
 ## One-time Discord setup
 
@@ -14,24 +16,35 @@ This is an early build. Working now: `/book`, `/profile`, `/config` (personal de
 
 ## Run on Windows (development)
 
-```bat
-py -3 -m venv .venv
-.venv\Scripts\pip install -r requirements-dev.txt
+Install Python 3.11 or newer from python.org first. On the installer's first screen, tick **Add python.exe to PATH**. Then open PowerShell in the project folder:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python -m pip install -r requirements-dev.txt
 copy .env.example .env
 ```
 
 Open `.env` and fill in `DISCORD_TOKEN` and `GUILD_ID`. Then:
 
-```bat
-.venv\Scripts\python -m pytest
-run.bat
+```powershell
+.\.venv\Scripts\python -m pytest
+.\run.bat
 ```
 
 Commands appear in your server within a few seconds of starting.
 
+## First-time setup in Discord
+
+Run these once, as an admin:
+
+1. `/config discussion-channel` (a forum channel is best; give it tags named "Book of the Month" and "Other Reads", or rename them with `/config forum-tags`)
+2. `/config reviews-channel`
+3. `/config announcement-channel`
+4. Optional: `/config admin-role`, `/config reminder-time`, `/config reminder-days`
+
 ## Cerlen's lines
 
-Copy `voice.example.json` to `data/voice.json` and edit it. Any line you do not write uses a plain default. A list of lines means Cerlen picks one at random. Restart the bot after changes.
+Copy `voice.example.json` to `data/voice.json` and edit it. It already holds every line from the Script Sheet; the built-in defaults in `cerlen/voice_defaults.py` are the same lines. Any line you do not write uses a plain default. A list of lines means Cerlen picks one at random. Restart the bot after changes.
 
 ## Move to the Linux server
 
