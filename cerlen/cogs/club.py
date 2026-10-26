@@ -36,7 +36,7 @@ class ClubCog(commands.GroupCog, group_name="club", group_description="Club read
     @app_commands.command(name="start", description="Start a club read. (admin)")
     @app_commands.describe(
         book="The book",
-        type="Book of the Month or an Other read",
+        kind="Book of the Month or an Other read",
         deadline="Optional date, like 2026-11-14",
         goodreads="Goodreads rating, 0 to 5 (optional)",
         storygraph="StoryGraph rating, 0 to 5 (optional)",
